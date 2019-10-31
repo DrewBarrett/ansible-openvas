@@ -1,0 +1,20 @@
+---
+# tasks file for sonarr
+- name: Setup directories
+  file:
+    path: /data/openvas
+    state: directory
+- name: Setup docker container
+  include_role:
+    name: docker_systemd_service
+  vars:
+    container_name: openvas
+    container_image: mikesplain/openvas
+    state: started
+    container_env:
+      PUBLIC_HOSTNAME: george
+    container_ports:
+      - "443:443"
+    container_volumes:
+      - /data/openvas:/var/lib/openvas/mgr
+
