@@ -1,2 +1,5 @@
 ---
 # defaults file for sonarr
+provider: docker # docker or systemd
+openvas_directory: /data/openvas
+public_hostname: '{{ inventory_hostname }}'

@@ -1,10 +1,9 @@
 ---
-# tasks file for sonarr
 - name: Setup directories
   file:
-    path: /data/openvas
+    path: '{{ openvas_directory }}'
     state: directory
-- name: Setup docker container
+- name: Setup docker container using systemd service
   include_role:
     name: docker_systemd_service
   vars:
@@ -12,9 +11,21 @@
     container_image: mikesplain/openvas
     state: started
     container_env:
-      PUBLIC_HOSTNAME: george
+      PUBLIC_HOSTNAME: '{{ public_hostname }}'
     container_ports:
       - "443:443"
     container_volumes:
       - /data/openvas:/var/lib/openvas/mgr
-
+  when: provider == 'systemd'
+- name: Setup docker container using Docker
+  docker_container:
+    name: openvas
+    image: mikesplain/openvas
+    state: started
+    env:
+      PUBLIC_HOSTNAME: '{{ public_hostname }}'
+    ports:
+      - "443:443"
+    volumes:
+      - '{{ openvas_directory }}:/var/lib/openvas/mgr'
+  when: provider == 'docker'
